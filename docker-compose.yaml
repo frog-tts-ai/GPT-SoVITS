@@ -2,16 +2,21 @@ version: '3.8'
 
 services:
   gpt-sovits:
-    image: breakstring/gpt-sovits:latest   # please change the image name and tag base your environment. If the tag contains the word 'elite', such as "latest-elite", it indicates that the image does not include the necessary models such as GPT-SoVITS, UVR5, Damo ASR, etc. You will need to download them yourself and map them into the container.
-    container_name: gpt-sovits-container
+    image: gpt-sovits:v1 # please change the image name and tag base your environment. If the tag contains the word 'elite', such as "latest-elite", it indicates that the image does not include the necessary models such as GPT-SoVITS, UVR5, Damo ASR, etc. You will need to download them yourself and map them into the container.
+    container_name: gpt-so
     environment:
       - is_half=False
       - is_share=False
     volumes:
-      - ./output:/workspace/output
-      - ./logs:/workspace/logs
-      - ./SoVITS_weights:/workspace/SoVITS_weights
-      - ./reference:/workspace/reference
+      - /home/frog/data/gpt-sovits/output:/workspace/output
+      - /home/frog/data/gpt-sovits/logs:/workspace/logs
+      - /home/frog/data/gpt-sovits/SoVITS_weights:/workspace/SoVITS_weights
+      - /home/frog/data/gpt-sovits/SoVITS_weights_v2:/workspace/SoVITS_weights_v2
+      - /home/frog/data/gpt-sovits/reference:/workspace/reference
+      - /home/frog/data/gpt-sovits/pretrained_models:/workspace/GPT_SoVITS/pretrained_models
+      - /home/frog/data/gpt-sovits/uvr5_weights:/workspace/tools/uvr5/uvr5_weights
+      - /home/frog/data/nltk:/workspace/nltk_data
+      - /home/frog/data/modelscope/hub/damo:/workspace/tools/asr/models/
     working_dir: /workspace
     ports:
       - "9880:9880"
@@ -24,9 +29,9 @@ services:
       resources:
         reservations:
           devices:
-          - driver: nvidia
-            count: "all"
-            capabilities: [gpu]
+            - driver: nvidia
+              count: "all"
+              capabilities: [ gpu ]
     stdin_open: true
     tty: true
     restart: unless-stopped
